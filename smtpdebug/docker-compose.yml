@@ -1,0 +1,22 @@
+version: '3.9'
+networks:
+  laravel1_laravel1_network:
+    external: true
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: ./docker/server/Dockerfile
+    container_name: '${APP_NAME}_server'
+    ports: ['${APP_PORT_APACHE}:80', '8888:8888', '25:25', '587:587']
+    working_dir: '/var/www/smtpdebug_code'
+    volumes:
+      - '${CODE_DIR}/smtpdebug_code:/var/www/smtpdebug_code'
+      - ./docker/server/apache/sites-enabled:/etc/apache2/sites-enabled
+      - ./docker/server/php/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
+      - '${CODE_DIR}/smtpdebug_server:/var/www/smtpdebug_server'
+      - '${CODE_DIR}/smtpdebug_client:/var/www/smtpdebug_client'
+      - '${CODE_DIR}/smtpdebug_server2:/var/www/smtpdebug_server2'
+      - '${CODE_DIR}/server3:/var/www/server3'
+    networks: [laravel1_laravel1_network]

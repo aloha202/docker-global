@@ -1,0 +1,15 @@
+version: '3.9'
+networks:
+  laravel1_laravel1_network:
+    external: true
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: ./docker/server/Dockerfile
+    container_name: 'laracasts_server'
+    ports: [9060:9060, 9061:9061, 9062:9062]
+    working_dir: '/var/www/laracasts_code'
+    volumes: ['${CODE_DIR}:/var/www/laracasts_code', ./docker/server/php/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini]
+    networks: [laravel1_laravel1_network]

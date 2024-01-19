@@ -1,0 +1,37 @@
+version: '3.9'
+networks:
+  laravel1_network:
+
+services:
+  db_server:
+    image: mariadb:10.5.9
+    container_name: 'laravel1_db'
+    ports: ['${DB_PORT}:3306']
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
+      MYSQL_USER: '${MYSQL_USER}'
+      MYSQL_PASSWORD: '${MYSQL_PASS}'
+      MYSQL_DATABASE: '${MYSQL_DB}'
+    volumes: [laravel1_data:/var/lib/mysql, ./data:/var/data]
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
+      interval: 5s
+      retries: 5
+    networks: [laravel1_network]
+
+  db_admin:
+    image: phpmyadmin/phpmyadmin:5
+    container_name: 'laravel1_db_admin'
+    ports: ['${APP_DB_ADMIN_PORT}:80']
+    environment:
+      PMA_HOST: db_server
+      PMA_USER: root
+      PMA_PASSWORD: '${MYSQL_ROOT_PASS}'
+    depends_on:
+      db_server:
+        condition: service_healthy 
+    networks: [laravel1_network]
+
+volumes:
+  laravel1_data:
+#  laravel1_data2:
